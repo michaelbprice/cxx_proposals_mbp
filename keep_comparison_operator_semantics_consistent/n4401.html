@@ -54,7 +54,7 @@
 
   </style>
 
-  <title>Keep comparison operator semantics consistent</title>
+  <title>Defaulted comparison operator semantics should be uniform</title>
 
 </head>
 
@@ -68,13 +68,16 @@
   </table>
 
   <br/>
-  <h1>Keep comparison operator semantics consistent</h1>
+  <h1>Defaulted comparison operator semantics should be uniform</h1>
 
   <h2><a name="introduction">I. Introduction</a></h2>
 
   <p>
-    Provides an argument for keeping the semantics of any compiler-generated comparison
-    operators consistent with those of other compiler-generated special member functions.
+    Argues that WG21 should keep the semantics of any compiler-generated
+    comparison operators uniform with those of other compiler-generated
+    special member functions; specifically that <strong><code>mutable</code>
+    and pointer members should be included in the default comparison
+    operations</strong>.
   </p>
 
   <h2><a name="details">II. The Details</a></h2>
@@ -239,7 +242,15 @@
     operators. The general argument is that any generated comparison operators
     for those kinds of members might not be what a user expects; ordered
     comparisons for pointers currently have serious problems and comparing a
-    <code>mutable</code> member could have side-effects on its value.
+    <code>mutable</code> member could have side-effects on its value. Those
+    concerns are valid, but that is our current state with regards to other
+    generated special member functions. Therefore, the proposal to include
+    those types in the default comparisons are likely to only be palatable if
+    we agree to restrict the generation to those cases where we believe it
+    should be a safe operation, or to impose stricter requirements, such as
+    forcing the author to explicitly <em>opt-in</em> behavior by requiring the
+    author of a type to request the default implementation via
+    <code>= default;</code>.
   </p>
 
   <p>

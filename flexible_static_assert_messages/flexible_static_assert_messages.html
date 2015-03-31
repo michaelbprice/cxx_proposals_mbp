@@ -73,30 +73,94 @@
   <h2><a name="introduction">I. Introduction</a></h2>
 
   <p>
+    Currently, the specification for <code>static_assert</code> has two forms,
+    one that takes a <em>string-literal</em> that is used as a diagnostic
+    message and another that takes no diagnostic message at all. The
+    restriction that the diagnostic message be a <em>string-literal</em> is
+    limiting since it doesn't allow useful contextual information to be
+    inserted into the diagnostic message.  This paper proposes that we change
+    the specification to take a constant expression that can be contextually
+    converted to a <code>const char*</code> instead of a <em>string-literal</em>.
   </p>
 
   <h2><a name="motivation">II. Motivation</a></h2>
 
   <p>
+    As a library developer, I'd like to include information in diagnostic
+    messages that indicate that my library was the source of the assertion.
+    With the current specification, this becomes an error-prone exercise. To
+    make it worse, if I were required to "rebrand" my library, it's even worse.
+    With the proposed changes, it's a matter of changing a single line in a
+    header file.
   </p>
 
   <pre class="example">
-  <code>// Providing domain specific errors that are easier to document (or)
-  // What library did that static_assert fire in? And how can I look up more inforamtion
+  <code>// mplib.h
   //
   constexpr auto libraryTag = "MP"S; // Presumes a UDL for compile-time string literals
+                                     // (see N4121 <a href="#ref_2">[2]</a>)
 
-  static_assert(sizeof(int) == 32, libraryTag + ":"S + "Requires type 'int' to be 32 bits");
-    
-  </code>
+  template &lt;typename C, typename M&gt;
+  constexpr auto msg (C errorCode, M message)
+  {
+      return libraryTag + errorCode + ": "S + message;
+  }
+
+
+  // mpsource1.cpp
+  //
+  #include "mplib.h"
+  // ...
+  static_assert(sizeof(int) == 32, msg("001"S, "Requires type 'int' to be 32 bits"S));
+
+
+  // mpsource8534.cpp
+  //
+  #include "mplib.h"
+  // ...
+  static_assert(std::is_integral&lt;T&gt;::value, msg("999"S, "T must be an integral type"S);</code>
   </pre>
 
-  <h2><a name="specification">IV. Technical Specification</a></h2>
+  <p>
+    Another use case of such an extension would be to allow type-dependent or
+    implementation-specific information to appear in the diagnostic message.
+  </p>
+
+  <pre class="example">
+  <code>// Assume some compile-time formatter function with the following syntax
+  //
+  template &lt;typename M, typename Ts...&gt;
+  constexpr auto format (const M&amp; message, Ts... ts);
+
+
+  template &lt;typename T, std::size_t N&gt;
+  struct limited_buffer {
+    unsigned char data[16];
+
+    static_assert(sizeof(T) * N &lt;= sizeof(data),
+                  format("You can only fit {0} {1}s into a {2}."S,
+                         sizeof(data)/sizeof(T),
+                         typeid(T)::name(),    // Assuming this were constexpr
+                         "limited_buffer"S
+                        )
+                 );
+  };</code>
+  </pre>
+
+  <h2><a name="specification">III. Technical Specification</a></h2>
 
   <p>
     This paper is looking for guidance on whether this approach should be pursued. It provides no
     wording for the standard.
   </p>
+
+  <h2><a name="references">IV. References</a></h2>
+
+  <a name="ref_1" />
+  <div>[1] <a href="http://www.open-std.org/jtc1/sc22/wg21/prot/14882fdis/n4140.pdf">R. Smith, <em>Working Draft, Standard for Programming Language C++</em>. N4140.</a></div>
+  <a name="ref_2" />
+  <div>[2] <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4121.pdf">A. Tomazos, <em>Compile-Time String: std::string_literal&lt;n&gt;</em>. N4121.</a></div>
+
 
 </body>
 </html>

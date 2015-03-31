@@ -150,9 +150,43 @@
   <h2><a name="specification">III. Technical Specification</a></h2>
 
   <p>
-    This paper is looking for guidance on whether this approach should be pursued. It provides no
-    wording for the standard.
+    All edits are against N4140 <a href="#ref_1">[1]</a>
   </p>
+
+  <p>
+    Edit paragraph 7.1 [dcl.dcl] as follows.
+  </p>
+
+  <blockquote class="std"><p>
+    <div style="text-indent:-2em; margin-left:2em;">
+      <em>static_assert-declaration:</em><br/>
+      <code>static_assert ( <del><em>constant-expression</em></del> <ins><em>constant-expression-test</em></ins> ) ;</code><br/>
+      <code>static_assert ( <del><em>constant-expression</em></del> <ins><em>constant-expression-test</em></ins> , <del><em>string-literal</em></del><ins><em>constant-expression-message</em></ins> ) ;</code>
+    </div>
+  </p></blockquote>
+
+  <p>
+    Edit paragraph 7.1.6 as follows.
+  </p>
+
+  <blockquote class="std"><p>
+    In a <em>static_assert-declaration</em> the <del><em>constant-expression</em></del>
+    <ins><em>constant-expression-test</em></ins> shall be a constant expression
+    (5.20) that can be contextually converted to <code>bool</code> (Clause 4)
+    <ins>, and the <em>constant-expression-message</em> shall be a constant
+    expression (5.20) that can be contextually converted to <code>const char*</code>
+    (Clause 4)</ins>. If the value of <del>the expression</del>
+    <ins><em>constant-expression-test</em></ins> when so converted is
+    <code>true</code>, the declaration has no effect. Otherwise, the program
+    is ill-formed, and the resulting diagnostic message (1.4) shall include
+    the <del>text of the <em>string-literal</em></del> <ins>value of
+    <em>constant-expression-message</em> after conversion</ins>, if one is
+    supplied, except that characters not in the basic source character set
+    (2.3) are not required to appear in the diagnostic message.
+    [ <em>Example:</em>
+    <div style="margin-left:2em; margin-top:1em; margin-bottom:1em;"><code>static_assert(sizeof(long) &gt;= 8, "64-bit code generation required for this library.");</code></div>
+    <em>&mdash; end example</em> ]
+  </p></blockquote>
 
   <h2><a name="references">IV. References</a></h2>
 

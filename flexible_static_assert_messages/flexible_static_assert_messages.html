@@ -48,7 +48,7 @@
       padding-left: 0.8em; border: none; }
     td { text-align: left; vertical-align: top;
       padding-left: 0.8em; border: none; }
-      
+
     table.docinfo { border: none; border-spacing: 0px;
       margin-left: auto; margin-right: none; float: right; }
 
@@ -61,12 +61,12 @@
 <body>
   <table border="1" class="docinfo">
     <tr> <th>Doc. No.:</th> <td>D????</td> </tr>
-    <tr> <th>Date:</th>     <td>2014-??-??</td> </tr>
+    <tr> <th>Date:</th>     <td>2014-04-??</td> </tr>
     <tr> <th>Project:</th>  <td>Programming Language C++, Evolution Working Group</td> </tr>
     <tr> <th>Reply To:</th> <td>Michael Price<br/>
                                 &lt;<a href="mailto:michael.b.price.dev@gmail.com">michael.b.price.dev@gmail.com</a>&gt;</td> </tr>
   </table>
-  
+
   <br/>
   <h1>Flexible <code>static_assert</code> messages</h1>
 
@@ -174,7 +174,9 @@
     <ins><em>constant-expression-test</em></ins> shall be a constant expression
     (5.20) that can be contextually converted to <code>bool</code> (Clause 4)
     <ins>, and the <em>constant-expression-message</em> shall be a constant
-    expression (5.20) that can be contextually converted to <code>const char*</code>
+    expression (5.20) that can be contextually converted to
+    <code>const char*</code>, <code>const wchar_t*</code>,
+    <code>const char16_t*</code>, or <code>const char32_t*</code>
     (Clause 4)</ins>. If the value of <del>the expression</del>
     <ins><em>constant-expression-test</em></ins> when so converted is
     <code>true</code>, the declaration has no effect. Otherwise, the program
@@ -184,11 +186,51 @@
     supplied, except that characters not in the basic source character set
     (2.3) are not required to appear in the diagnostic message.
     [ <em>Example:</em>
-    <div style="margin-left:2em; margin-top:1em; margin-bottom:1em;"><code>static_assert(sizeof(long) &gt;= 8, "64-bit code generation required for this library.");</code></div>
+    <div style="margin-left:2em; margin-top:1em; margin-bottom:1em;">
+      <code>static_assert(sizeof(long) &gt;= 8, "64-bit code generation required for this library.");</code>
+    </div>
     <em>&mdash; end example</em> ]
   </p></blockquote>
 
-  <h2><a name="references">IV. References</a></h2>
+  <h2><a name="qna">IV. Questions and Answers</a></h2>
+
+  <div style="margin-left: 1.5em;">
+    <span style="font-size: 1.15em; font-weight: bold; font-style: italic;">
+      Q: What happens if a <code>static_assert</code> fires during the
+      evaluation of the <em>constant-expression-message</em>?
+    </span>
+    &nbsp;
+    <span style="font-size: 1.15em;">
+      A: Implementation defined behavior.
+    </span>
+    <p>
+      The current text does not specify what happens if a <code>static_assert</code>
+      fires during the evaluation of the expression being tested. Admittedly,
+      choosing a behavior might be more complicated in this case, but it should
+      still be at the discretion of the implementation.
+    </p>
+  </div>
+
+  <div style="margin-left: 1.5em;">
+    <span style="font-size: 1.15em; font-weight: bold; font-style: italic;">
+      Q: Why support so many character-types (<code>const wchar_t*</code>, etc...)?
+    </span>
+    &nbsp;
+    <span style="font-size: 1.15em;">
+      A: Because the grammer for the existing <em>string-literal</em> parameter does.
+    </span>
+    <p>
+      See [lex.string].
+    </p>
+  </div>
+
+  <h2><a name="acknowledgements">V. Acknowledgements</a></h2>
+
+  <p>
+    TODO
+  </p>
+
+  <h2><a name="references">VI. References</a></h2>
 
   <a name="ref_1" />
   <div>[1] <a href="http://www.open-std.org/jtc1/sc22/wg21/prot/14882fdis/n4140.pdf">R. Smith, <em>Working Draft, Standard for Programming Language C++</em>. N4140.</a></div>

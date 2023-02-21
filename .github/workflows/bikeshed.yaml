@@ -1,0 +1,17 @@
+name: Generate papers with bikeshed
+on: [ pull_request ]
+
+jobs:
+  build-validate-deploy:
+    name: Build, Validate, and Deploy
+    strategy:
+      matrix:
+        source: [ ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: w3c/spec-prod@v2
+        with:
+          TOOLCHAIN: bikeshed
+          SOURCE: src/${{ matrix.source }}.bs
+          DESTINATION: out/${{ matrix.source }}.html

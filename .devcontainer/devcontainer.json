@@ -1,0 +1,19 @@
+{
+	"name": "Ubuntu",
+	"image": "mcr.microsoft.com/devcontainers/base:jammy",
+	"features": {
+		"ghcr.io/devcontainers/features/python:1": {},
+		"ghcr.io/devcontainers-contrib/features/bikeshed:2": {}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"kainino.bikeshed"
+			]
+		}
+	}
+}

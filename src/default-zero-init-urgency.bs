@@ -1,0 +1,38 @@
+<pre class='metadata'>
+Title: Treat P2723 as a defect resolution
+Shortname: d-default-zero-init-urgency
+Revision: 0
+URL: http://wg21.link/
+Group: WG21
+Audience: EWG, CWG
+Status: D
+Editor: michael.b.price.dev@gmail.com
+#Editor: <additional-editors-can-go-here-uncomment>
+Markup Shorthands: markdown yes
+Abstract: We should treat the undefined behavior of non-initialized, non-class
+          stack variable declarations as a language defect and apply the
+          wording for P2723 as a defect resolution to previous versions of the
+          standard.
+</pre>
+
+# *Important* && *Urgent*
+
+## Real-world examples
+
+# Are non-initialized variables a defect
+
+## Determining user intent
+
+# Deploying a solution
+
+## Availability
+
+## Detecing erroneous behavior
+
+## Risks of adoption
+
+# Suggested course of action
+
+## Adopt least-costly, non-obstructive opt-out solution
+
+## Vendor encouragement to backport

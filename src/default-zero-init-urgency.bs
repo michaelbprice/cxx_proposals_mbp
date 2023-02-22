@@ -7,7 +7,6 @@ Group: WG21
 Audience: EWG, CWG
 Status: D
 Editor: michael.b.price.dev@gmail.com
-#Editor: <additional-editors-can-go-here-uncomment>
 Markup Shorthands: markdown yes
 Abstract: We should treat the undefined behavior of non-initialized, non-class
           stack variable declarations as a language defect and apply the

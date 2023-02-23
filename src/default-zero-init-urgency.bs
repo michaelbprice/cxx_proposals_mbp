@@ -8,10 +8,14 @@ Audience: EWG, CWG
 Status: D
 Editor: michael.b.price.dev@gmail.com
 Markup Shorthands: markdown yes
-Abstract: We should treat the undefined behavior of non-initialized, non-class
-          stack variable declarations as a language defect and apply the
-          wording for P2723 as a defect resolution to previous versions of the
-          standard.
+Abstract: This paper argues that the WG14 and WG21 committees and implementers
+          thereof should consider the elimination of uninitialized stack
+          variables as *important* and *urgent*. The importance of eliminating
+          this common attack vector is demonstrated, as well as the urgency
+          for both the committee and implementers to aggressively adopt
+          available solutions. We also consider the risks associated with an
+          aggressive approach and attempt to balance those with the benefits of
+          resolving this long-standing problem.
 </pre>
 
 # *Important* && *Urgent*

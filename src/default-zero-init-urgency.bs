@@ -1,0 +1,41 @@
+<pre class='metadata'>
+Title: Treat P2723 as a defect resolution
+Shortname: d-default-zero-init-urgency
+Revision: 0
+URL: http://wg21.link/
+Group: WG21
+Audience: EWG, CWG
+Status: D
+Editor: michael.b.price.dev@gmail.com
+Markup Shorthands: markdown yes
+Abstract: This paper argues that the WG14 and WG21 committees and implementers
+          thereof should consider the elimination of uninitialized stack
+          variables as *important* and *urgent*. The importance of eliminating
+          this common attack vector is demonstrated, as well as the urgency
+          for both the committee and implementers to aggressively adopt
+          available solutions. We also consider the risks associated with an
+          aggressive approach and attempt to balance those with the benefits of
+          resolving this long-standing problem.
+</pre>
+
+# *Important* && *Urgent*
+
+## Real-world examples
+
+# Are non-initialized variables a defect
+
+## Determining user intent
+
+# Deploying a solution
+
+## Availability
+
+## Detecing erroneous behavior
+
+## Risks of adoption
+
+# Suggested course of action
+
+## Adopt least-costly, non-obstructive opt-out solution
+
+## Vendor encouragement to backport

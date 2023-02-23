@@ -16,11 +16,12 @@ Group: WG21
 Audience: <ewg-or-some-other-valid-group>
 Status: <D-or-P>
 Editor: michael.b.price.dev@gmail.com
-#Editor: <additional-editors-can-go-here-uncomment>
 Markup Shorthands: markdown yes
 No abstract: <true-or-provide-Abstract-metadata>
 </pre>
 ```
+
+Co-authors can be added by adding additional `Editor:` lines to the metadata.
 
 After adding the file in the right location, put the name of the file (without the extension) in the matrix.sources array in `.github/workflows/bikeshed.yaml` for it to be picked up for generation.
 

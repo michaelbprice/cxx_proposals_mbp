@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+
+  <meta http-equiv="Content-Type" content="text/html;charset=US-ASCII">
+
+<!-- This should replace the style block once it is published somewhere accessible
+  <link href="../../base_www/style.hinc" rel="stylesheet" type="text/css" />
+-->
+
+  <style type="text/css">
+
+    body { color: #000000; background-color: #FFFFFF; }
+    del { text-decoration: line-through; color: #8B0040; }
+    ins { text-decoration: underline; color: #005100; }
+
+    p.example { margin-left: 2em; }
+    pre.example { margin-left: 2em; }
+    div.example { margin-left: 2em; }
+
+    code.extract { background-color: #F5F6A2; }
+    pre.extract { margin-left: 2em; background-color: #F5F6A2;
+      border: 1px solid #E1E28E; }
+
+    p.function { }
+    .attribute { margin-left: 2em; }
+    .attribute dt { float: left; font-style: italic;
+      padding-right: 1ex; }
+    .attribute dd { margin-left: 0em; }
+
+    blockquote.std { color: #000000; background-color: #F1F1F1;
+      border: 1px solid #D1D1D1;
+      padding-left: 0.5em; padding-right: 0.5em; }
+    blockquote.stddel { text-decoration: line-through;
+      color: #000000; background-color: #FFEBFF;
+      border: 1px solid #ECD7EC;
+      padding-left: 0.5empadding-right: 0.5em; ; }
+
+    blockquote.stdins { text-decoration: underline;
+      color: #000000; background-color: #C8FFC8;
+      border: 1px solid #B3EBB3; padding: 0.5em; }
+
+    table { border: 1px solid black; border-spacing: 0px;
+      margin-left: auto; margin-right: auto; }
+    th { text-align: left; vertical-align: top;
+      padding-left: 0.8em; border: none; }
+    td { text-align: left; vertical-align: top;
+      padding-left: 0.8em; border: none; }
+      
+    table.docinfo { border: none; border-spacing: 0px;
+      margin-left: auto; margin-right: none; float: right; }
+
+  </style>
+
+  <title>A value identity operator</title>
+
+</head>
+
+<body>
+  <table border="1" class="docinfo">
+    <tr> <th>Doc. No.:</th> <td>D????</td> </tr>
+    <tr> <th>Date:</th>     <td>2014-??-??</td> </tr>
+    <tr> <th>Project:</th>  <td>Programming Language C++, Evolution Working Group</td> </tr>
+    <tr> <th>Reply To:</th> <td>Michael Price<br/>
+                                &lt;<a href="mailto:michael.b.price.dev@gmail.com">michael.b.price.dev@gmail.com</a>&gt;</td> </tr>
+  </table>
+  
+  <br/>
+  <h1>A value identity operator</h1>
+
+  <h2><a name="introduction">I. Introduction</a></h2>
+
+  <p>
+    Proposes an explicit concept of object value identity and a new operator that defines what
+    properties of a type contribute to the value identity of an object.
+  </p>
+
+  <h2><a name="motivation">II. Motivation</a></h2>
+
+  <p>
+    Recently, there have been several papers
+    (<a href="http://open-std.org/JTC1/SC22/WG21/docs/papers/2014/n4126.htm">N4126</a>,
+    <a href="http://open-std.org/JTC1/SC22/WG21/docs/papers/2014/n4175.pdf">N4175</a>,
+    <a href="http://open-std.org/JTC1/SC22/WG21/docs/papers/2014/n4176.pdf">N4176</a>,
+    <a href="http://open-std.org/JTC1/SC22/WG21/docs/papers/2014/n4239.pdf">N4239</a>),
+    advocating different approaches to reducing the
+    drudgery of providing comparison operators for anything but the simplest of types.
+    This author believes that the foundational question that belies nearly all of these proposals is
+    "What contributes to the value identity of an object?"
+  </p>
+
+  <p>
+    In one respect, the language has already provided a default answer to this question. A defaulted
+    copy or move operation implicitly defines what properties are fundamental to the value of a
+    type. Unfortunately, this default is not always correct, which is why those operations can be
+    explicitly defined.  Just as the value identity of an object is important to copy and move
+    operations, it is just as important to equality and ordering comparison operations.  Therefore
+    I propose the following features be added to the language.
+  </p>
+
+  <pre class="example">
+  <code>struct A {
+      int x;
+      char c;
+
+      auto operator=== () = default;
+
+      // Because we defaulted operator===, we get generated comparison operations
+      // that test (most?) fields in the same order they are constructed, or
+      // as an optimization for "trivially comparable" types, a memcmp operation.
+  };
+
+  struct B {
+      std::string s;
+      double unimportant; // Does not contribute to identity, so gets ignored
+
+      auto operator=== () /* -&gt; implementation defined */ {
+          return {s};
+      }
+
+      // Because we defined operator===, we get generated comparison operations
+      // that test the expressions in the order they appear in the braced-init-list,
+      // and nothing else.      
+  };
+
+  struct D : A {
+      B b;
+
+      auto operator=== () = default;
+  };</code>
+  </pre>
+
+  <p>
+    This solution provides a simple, opt-in syntax to get the default comparison behavior, while
+    allowing a type to customize the selection and ordering of member fields that contribute to
+    the value identity of a type in a fairly simple and straightforward manner, thereby reducing the
+    opportunities to make critical mistakes in the implementation of comparison operations.
+  </p>
+
+  <p>
+    Additionally, since the return expression of <code>operator===</code> is a braced-init-list
+    of expressions, one could, given a few helper utilities, signify that the comparison of a
+    pointer member should be deep instead of shallow.
+  </p>
+
+  <pre class="example">
+  <code>template &lt;typename T&gt;
+  struct deep_pointer_comparator {
+      T * mp;
+
+      deep_pointer_comparator (T * p) : mp{p} {}
+
+      bool operator&lt; (deep_pointer_comparator&lt;T&gt; &amp; rhs) {
+          if (mp == nullptr || rhs.mp == nullptr)
+              return false;
+
+          return (*mp &lt; *rhs.mp);
+      }
+
+      /* Other deep comparison operators should also be implemented */
+  };
+
+  template &lt;typename T&gt;
+  deep_pointer_comparator&lt;T&gt; make_deep_pointer_comparator(T * p) {
+      return deep_pointer_comparator&lt;T&gt;{p};
+  }
+
+  struct C {
+      std::unique_ptr&lt;B&gt; u;
+
+      auto operator=== () /* -&gt; implementation defined */ {
+          return { make_deep_pointer_comparator(u.get()) };
+      }
+  };</code>
+  </pre>
+
+
+  <h2><a name="other">III. Other Possibilities</a></h2>
+
+  <p>
+    Creating this explicit notion of value identity could cause an incongruence with the one
+    implied by default generated copy and move operations.  It is an open question whether or not
+    the existence of a value identify operator for a type should affect the behavior of default
+    generated copy and move operations.  It could be a useful option to specify that members that
+    that could throw during such operations should happen as early as possible, without having to
+    reorder their declarations in the type.  Unfortunately, the optimal ordering for copy or move
+    operations could very likely conflict with the optimal ordering for comparison operations.
+  </p>
+
+
+  <h2><a name="specification">IV. Technical Specification</a></h2>
+
+  <p>
+    This paper is looking for guidance on whether this approach should be pursued. It provides no
+    wording for the standard.
+  </p>
+
+</body>
+</html>
